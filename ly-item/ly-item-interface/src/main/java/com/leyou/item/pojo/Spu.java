@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 
 @Table(name = "tb_spu")
@@ -24,11 +25,17 @@ public class Spu {
     private Date createTime;// 创建时间
     @JsonIgnore
     private Date lastUpdateTime;// 最后修改时间
-	// 省略getter和setter
+	// 省略getter和setter,不往数据库里面查
     @Transient
     private String cname;
     @Transient
     private String bname;
+
+    @Transient
+    private List<Sku> skus;
+
+    @Transient
+    private SpuDetail spuDetail;
 
 
 }

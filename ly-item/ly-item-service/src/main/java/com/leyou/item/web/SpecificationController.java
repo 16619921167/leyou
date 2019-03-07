@@ -1,6 +1,5 @@
 package com.leyou.item.web;
 
-import com.leyou.item.mapper.SpecParaMapper;
 import com.leyou.item.pojo.SpecGroup;
 import com.leyou.item.pojo.SpecParam;
 import com.leyou.item.service.SpecificationService;
@@ -21,8 +20,21 @@ public class SpecificationController {
         return ResponseEntity.ok(specService.queryGroupByCid(cid));
     }
 
+
+
+    /**
+     * 查询的参数的集合
+     * @param gid
+     * @param cid
+     * @param searching
+     * @return
+     */
     @GetMapping("params")
-    public ResponseEntity<List<SpecParam>> queryParamByGid(@RequestParam("gid")Long gid){
-        return ResponseEntity.ok(specService.queryParamByGid(gid));
+    public ResponseEntity<List<SpecParam>> queryParamList(
+            @RequestParam(value = "gid",required = false)Long gid,
+            @RequestParam(value = "cid",required = false)Long cid,
+            @RequestParam(value = "searching", required = false)Boolean searching
+    ){
+        return ResponseEntity.ok(specService.queryParamByGid(gid,cid,searching));
     }
 }

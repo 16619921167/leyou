@@ -5,20 +5,18 @@ import com.github.pagehelper.PageInfo;
 import com.leyou.common.enums.ExceptionEnum;
 import com.leyou.common.exception.LyException;
 import com.leyou.common.vo.PageResult;
+import com.leyou.item.mapper.SkuMapper;
 import com.leyou.item.mapper.SpuDetailMapper;
 import com.leyou.item.mapper.SpuMapper;
-import com.leyou.item.pojo.Category;
-import com.leyou.item.pojo.Spu;
+import com.leyou.item.pojo.*;
+import lombok.val;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +32,9 @@ public class GoodsService {
 
     @Autowired
     private BrandService brandService;
+
+    @Autowired
+    private SkuMapper skuMapper;
 
 
     public PageResult<Spu> querySpuByPageAndSort(Integer page, Integer rows, Boolean saleable, String key) {
@@ -80,5 +81,41 @@ public class GoodsService {
             spu.setBname(brandService.queryById(spu.getBrandId()).getName());
 
         }
+    }
+
+    public void saveGoods(Spu spu) {
+        //新增spu
+        spu.setId(null);
+        spu.setCreateTime(new Date());
+        spu.setLastUpdateTime(spu.getCreateTime());
+        spu.setSaleable(true);
+        spu.setValid(false);
+
+        int count = spuMapper.insert(spu);
+        if(count != 1){
+            throw new LyException(ExceptionEnum.GOODS_NOT_FOUND);
+        }
+        //新增detail
+        SpuDetail detail = spu.getSpuDetail();
+        detail.setSpuId(spu.getId());
+        detailMapper.insert(detail);
+
+        //新增sku
+        List<Sku> skus = spu.getSkus();
+        for (Sku sku : skus) {
+            sku.setCreateTime(new Date());
+            sku.setLastUpdateTime(sku.getCreateTime());
+            sku.setSpuId(spu.getId());
+            count = skuMapper.insert(sku);
+            if(count!=0){
+                throw new LyException(ExceptionEnum.BRAND_NOT_FOUND)
+            }
+            //新增库存
+            Stock stock = new Stock();
+            stock.setSkuId(sku.getId());
+
+        }
+
+
     }
 }
