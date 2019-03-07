@@ -64,5 +64,14 @@ public class BrandService {
                  throw  new LyException(ExceptionEnum.BRAND_SAVE_ERROR);
              }
         }
+
+
+    }
+    public Brand queryById(Long id){
+        Brand brand = brandMapper.selectByPrimaryKey(id);
+        if(brand == null){
+            throw new LyException(ExceptionEnum.BRAND_NOT_FOUND);
+        }
+        return  brand;
     }
 }

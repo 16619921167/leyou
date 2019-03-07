@@ -37,7 +37,7 @@ public class FdfsTest {
 
     @Test
     public void testUploadAndCreateThumb() throws FileNotFoundException {
-        File file = new File("D:\\test\\baby.png");
+        File file = new File("D:\\software\\code\\1526115791468.png");
         // 上传并且生成缩略图
         StorePath storePath = this.storageClient.uploadImageAndCrtThumbImage(
                 new FileInputStream(file), file.length(), "png", null);
